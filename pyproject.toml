@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "vpbank-fraud-detection-pipeline"
+version = "1.0.0"
+description = "Production-grade fraud detection pipeline for VPBank — real-time transaction monitoring, anomaly detection, and compliance reporting"
+authors = [
+    {name = "Will Tran", email = "willtran112358@gmail.com"},
+]
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Financial Services",
+    "Topic :: Database :: Database Engines/Servers",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.1.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "structlog>=23.0.0",
+    "apache-airflow>=2.8.0",
+    "faker>=20.0.0",
+    "streamlit>=1.28.0",
+    "plotly>=5.18.0",
+    "scikit-learn>=1.3.0",
+    "psycopg2-binary>=2.9.0",
+    "click>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+test = ["pytest>=7.4.0", "pytest-cov>=4.1.0"]
+
+[project.scripts]
+vpbank-pipeline = "src.main:cli"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-v --cov=src --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311", "py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 100

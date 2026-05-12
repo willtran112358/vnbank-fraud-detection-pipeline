@@ -1,0 +1,4 @@
+"""Real-time monitoring and dashboard for VPBank fraud detection pipeline."""
+from .dashboard import FraudDashboard
+
+__all__ = ["FraudDashboard"]

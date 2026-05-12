@@ -1,13 +1,8 @@
-import streamlit as st
-import pandas as pd
+"""Backward-compatible entry point — delegates to the new monitoring dashboard."""
+from src.monitoring.dashboard import FraudDashboard
 
-st.title("Banking Transactions Dashboard")
-
-transactions = pd.read_csv("data/processed_transactions.csv")
-frauds = pd.read_csv("data/fraud_alerts.csv")
-
-st.header("Transaction Summary")
-st.write(transactions.describe())
-
-st.header("Fraudulent Transactions")
-st.write(frauds)
+if __name__ == "__main__":
+    FraudDashboard.run(
+        transactions_path="data/processed_transactions.csv",
+        alerts_path="data/fraud_alerts.csv",
+    )
