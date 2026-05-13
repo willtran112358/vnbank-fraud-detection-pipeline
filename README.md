@@ -1,14 +1,14 @@
 # Vietnam Banking Fraud Detection & Risk Intelligence Platform
 
-Enterprise-grade fraud detection and risk intelligence system integrating ThoughtMachine Core Banking with cryptographic general ledger models for real-time transaction monitoring, anomaly detection, and regulatory compliance.
+Enterprise-grade fraud detection and risk intelligence system integrating T24 Core Banking platform with real-time transaction monitoring, anomaly detection, and regulatory compliance. Designed for Vietnamese banking institutions processing high-volume transaction streams.
 
 ## Architecture
 
 ```mermaid
 graph TB
-    TM["🏦 ThoughtMachine<br/>Core Banking System<br/>Cryptography • GL • Contracts"]
+    T24["🏦 T24 Core Banking<br/>System<br/>GL • Contracts • Customers<br/>Transactions • Accounts"]
     
-    TM --> EXTRACT["📥 Extraction Layer<br/>CDC + Full Sync<br/>GL Balances • Transactions<br/>Customer Profiles"]
+    T24 --> EXTRACT["📥 Extraction Layer<br/>API + CDC Streams<br/>GL Balances • Transactions<br/>Customer Profiles"]
     
     EXTRACT --> S3["☁️ S3 Raw Zone<br/>Bronze Layer<br/>Partitioned by Date/Account"]
     
@@ -38,7 +38,7 @@ graph TB
     AIRFLOW -.-> TRANSFORM
     AIRFLOW -.-> SCORE
     
-    style TM fill:#1a5490,stroke:#000,color:#fff
+    style T24 fill:#1a5490,stroke:#000,color:#fff
     style EXTRACT fill:#3a7bd5,stroke:#000,color:#fff
     style S3 fill:#ff9900,stroke:#000,color:#fff
     style GOLD fill:#00b4d8,stroke:#000,color:#fff
@@ -51,7 +51,7 @@ graph TB
 
 | Stage | Component | Data Source | Description |
 |-------|-----------|-------------|-------------|
-| **1. Extraction** | `src/integrations/thoughtmachine_extractor.py` | ThoughtMachine GL API | CDC + Full sync of GL balances, transactions, contracts |
+| **1. Extraction** | `src/integrations/t24_extractor.py` | T24 GL API | Real-time API + CDC streams of GL balances, transactions, contracts |
 | **2. S3 Staging** | `src/jobs/bronze_ingest.py` | AWS S3 Raw | Partition by date/account ID, Parquet format |
 | **3. Validation** | `src/etl/validator.py` | Bronze Zone | Schema validation, duplicate detection, data quality checks |
 | **4. Transformation** | `src/jobs/silver_transform.py` | Silver Zone | Feature engineering, risk indicators, customer enrichment |
@@ -64,7 +64,7 @@ graph TB
 
 | Layer | Technology |
 |-------|-----------|
-| **Source System** | ThoughtMachine Core Banking (GL + Contracts) |
+| **Source System** | T24 Core Banking (GL, Contracts, Customer Accounts) |
 | **Data Lake** | AWS S3 (Bronze/Silver/Gold) + Redshift/RDS |
 | **Language** | Python 3.10+ (Async, Multiprocessing) |
 | **Data Processing** | PySpark, Pandas, DuckDB |
@@ -83,11 +83,11 @@ graph TB
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Configure ThoughtMachine connection
+# 2. Configure T24 connection
 cp .env.example .env
-# Edit .env: TM_API_URL, TM_API_KEY, AWS credentials
+# Edit .env: T24_API_URL, T24_API_KEY, AWS credentials
 
-# 3. Run extraction pipeline (ThoughtMachine → S3)
+# 3. Run extraction pipeline (T24 → S3)
 python -m src.jobs.bronze_ingest --date 2024-05-13 --incremental
 
 # 4. Run transformation (Silver/Gold layers)
@@ -106,25 +106,35 @@ streamlit run src/monitoring/dashboard.py
 
 ## Data Models
 
-### ThoughtMachine GL Integration
+### T24 Core Banking Integration
 
-**Source**: ThoughtMachine Core Banking (Cryptographic General Ledger)
+**Source**: T24 Core Banking (General Ledger, Contracts, Customer Accounts)
 
 ```
-GL Structure:
-├── Ledger (Account Balance)
-│   ├── Posting Instructions (Transactions)
-│   ├── Contracts (Products)
-│   └── Customer (Account Holder)
-├── Vault (Encrypted Secrets)
-└── Calendar (Business Days)
+T24 GL Structure:
+├── General Ledger (GL Accounts)
+│   ├── Account Balances
+│   ├── Transaction History
+│   └── Post-dated Items
+├── Customer (CIF)
+│   ├── Customer Master Data
+│   ├── Account Holders
+│   └── Contact Information
+├── Contracts
+│   ├── Deposit Products
+│   ├── Loan Products
+│   └── Service Agreements
+└── Deal (Transactions)
+    ├── Funding
+    ├── Withdrawals
+    └── Inter-account Transfers
 ```
 
 **Extracted Tables** (S3 Parquet):
-- `gl_balances` — Account balances per posting instruction
-- `gl_transactions` — Posting instruction details with GL accounts
-- `gl_contracts` — Product contracts linked to customers
-- `gl_customers` — Customer master data
+- `t24_gl_balances` — Account balances from GL master file
+- `t24_transactions` — Posted and unposted transaction records
+- `t24_contracts` — Product contracts linked to customers
+- `t24_customers` — Customer master data with KYC information
 
 ## Repository Structure
 
