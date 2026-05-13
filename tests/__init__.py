@@ -1,1 +1,1 @@
-"""Test suite for VPBank fraud detection pipeline."""
+"""Test suite for VNBank fraud detection pipeline."""

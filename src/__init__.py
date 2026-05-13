@@ -1,1 +1,1 @@
-"""VPBank Fraud Detection Pipeline — Production-grade data engineering platform."""
+"""VNBank Fraud Detection Pipeline — Production-grade data engineering platform."""

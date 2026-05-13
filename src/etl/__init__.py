@@ -1,4 +1,4 @@
-"""ETL processing layer for VPBank transaction pipeline."""
+"""ETL processing layer for VNBank transaction pipeline."""
 from .processor import TransactionProcessor
 from .enricher import DataEnricher
 

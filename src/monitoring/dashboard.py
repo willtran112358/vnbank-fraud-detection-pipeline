@@ -1,4 +1,4 @@
-"""Streamlit-based real-time fraud monitoring dashboard for VPBank."""
+"""Streamlit-based real-time fraud monitoring dashboard for VNBank."""
 
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ class FraudDashboard:
     def run(transactions_path: str, alerts_path: str) -> None:
         """Launch the Streamlit dashboard application."""
         st.set_page_config(
-            page_title="VPBank Fraud Detection Dashboard",
+            page_title="VNBank Fraud Detection Dashboard",
             page_icon="🏦",
             layout="wide",
             initial_sidebar_state="expanded",
         )
 
-        st.title("🏦 VPBank Fraud Detection Pipeline")
+        st.title("🏦 VNBank Fraud Detection Pipeline")
         st.markdown("Real-time transaction monitoring and fraud intelligence platform")
 
         try:
