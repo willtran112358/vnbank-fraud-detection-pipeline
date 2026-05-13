@@ -1,4 +1,4 @@
-"""Apache Airflow DAG for VPBank fraud detection ETL pipeline."""
+"""Apache Airflow DAG for VNBank fraud detection ETL pipeline."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ default_args = {
     "retries": 2,
     "retry_delay": timedelta(minutes=5),
     "email_on_failure": True,
-    "email": ["data-engineering@vpbank.com.vn"],
+    "email": ["data-engineering@vnbank.com.vn"],
 }
 
 settings = AppSettings()
@@ -55,12 +55,12 @@ def run_fraud_detection_task() -> None:
 
 
 with DAG(
-    "vpbank_fraud_detection_pipeline",
+    "vnbank_fraud_detection_pipeline",
     default_args=default_args,
-    description="VPBank end-to-end fraud detection ETL pipeline",
+    description="VNBank end-to-end fraud detection ETL pipeline",
     schedule_interval=timedelta(days=1),
     catchup=False,
-    tags=["vpbank", "fraud", "etl"],
+    tags=["vnbank", "fraud", "etl"],
 ) as dag:
 
     generate_data = PythonOperator(

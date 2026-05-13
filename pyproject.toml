@@ -3,9 +3,9 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
-name = "vpbank-fraud-detection-pipeline"
+name = "vnbank-fraud-detection-pipeline"
 version = "1.0.0"
-description = "Production-grade fraud detection pipeline for VPBank — real-time transaction monitoring, anomaly detection, and compliance reporting"
+description = "Production-grade fraud detection pipeline for VNBank — real-time transaction monitoring, anomaly detection, and compliance reporting"
 authors = [
     {name = "Will Tran", email = "willtran112358@gmail.com"},
 ]
@@ -49,7 +49,7 @@ dev = [
 test = ["pytest>=7.4.0", "pytest-cov>=4.1.0"]
 
 [project.scripts]
-vpbank-pipeline = "src.main:cli"
+vnbank-pipeline = "src.main:cli"
 
 [tool.pytest.ini_options]
 minversion = "7.0"

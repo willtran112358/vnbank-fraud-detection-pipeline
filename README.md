@@ -1,89 +1,135 @@
-# VPBank Fraud Detection Pipeline
+# Vietnam Banking Fraud Detection & Risk Intelligence Platform
 
-Production-grade fraud detection platform for VPBank — processing banking transaction data through an end-to-end pipeline with real-time monitoring, ML-based anomaly detection, and compliance-ready alerting.
+Enterprise-grade fraud detection and risk intelligence system integrating ThoughtMachine Core Banking with cryptographic general ledger models for real-time transaction monitoring, anomaly detection, and regulatory compliance.
 
 ## Architecture
 
 ```mermaid
-flowchart LR
-    A[Synthetic Data Generator<br/>Faker-based] --> B[Raw Transactions CSV]
-    B --> C[ETL Processor<br/>Filter • Convert • Enrich]
-    C --> D[Processed Transactions]
-    D --> E[Fraud Detection Engine]
+graph TB
+    TM["🏦 ThoughtMachine<br/>Core Banking System<br/>Cryptography • GL • Contracts"]
     
-    subgraph FD [Fraud Detection Layer]
-        E1[Rule Engine<br/>Amount Threshold<br/>Rapid Consecutive<br/>Velocity Check]
-        E2[ML Anomaly Detector<br/>Isolation Forest]
-    end
+    TM --> EXTRACT["📥 Extraction Layer<br/>CDC + Full Sync<br/>GL Balances • Transactions<br/>Customer Profiles"]
     
-    E --> E1
-    E --> E2
-    E1 --> F[Fraud Alerts]
-    E2 --> F
+    EXTRACT --> S3["☁️ S3 Raw Zone<br/>Bronze Layer<br/>Partitioned by Date/Account"]
     
-    D --> G[Data Enricher<br/>Rolling Stats<br/>Location Risk]
-    G --> D
+    S3 --> VALIDATE["✅ Validation Stage<br/>Schema Check<br/>Duplicate Detection<br/>Data Quality Rules"]
     
-    F --> H[Streamlit Dashboard<br/>Real-time Monitoring]
-    D --> H
+    VALIDATE --> TRANSFORM["🔄 Silver Layer<br/>Data Enrichment<br/>Feature Engineering<br/>Risk Indicators<br/>Customer Profiles"]
     
-    I[Airflow DAG] --> C
-    I --> E
+    TRANSFORM --> GOLD["✨ Gold Layer<br/>Enriched Events<br/>Historical Snapshots<br/>ML Features"]
     
-    J[PostgreSQL<br/>Persistent Storage] --> D
-    J --> F
+    GOLD --> RB["🎯 Rule-Based Detection<br/>Amount Threshold<br/>Velocity Check<br/>Location Anomaly<br/>Time Pattern"]
+    
+    GOLD --> ML["🤖 ML Anomaly Detection<br/>Isolation Forest<br/>XGBoost Ranking<br/>Ensemble Scoring"]
+    
+    RB --> SCORE["📊 Risk Scoring<br/>Combine Signals<br/>Calculate Probability"]
+    ML --> SCORE
+    
+    SCORE --> ALERT["🚨 Fraud Alerts<br/>Severity Classification<br/>Auto-escalation"]
+    
+    ALERT --> PG["💾 PostgreSQL<br/>Alert History<br/>Case Management"]
+    
+    SCORE --> DASH["📈 Streamlit Dashboard<br/>Real-time Monitoring<br/>Risk Analytics<br/>Case Investigation"]
+    
+    ALERT --> COMPLIANCE["📋 Regulatory Reporting<br/>STR/CTR Generation<br/>Audit Trail"]
+    
+    AIRFLOW["⚙️ Airflow Orchestration"] -.-> EXTRACT
+    AIRFLOW -.-> VALIDATE
+    AIRFLOW -.-> TRANSFORM
+    AIRFLOW -.-> SCORE
+    
+    style TM fill:#1a5490,stroke:#000,color:#fff
+    style EXTRACT fill:#3a7bd5,stroke:#000,color:#fff
+    style S3 fill:#ff9900,stroke:#000,color:#fff
+    style GOLD fill:#00b4d8,stroke:#000,color:#fff
+    style SCORE fill:#ff006e,stroke:#000,color:#fff
+    style ALERT fill:#ff1744,stroke:#000,color:#fff
+    style DASH fill:#76ff03,stroke:#000,color:#000
 ```
 
-## Pipeline Stages
+## Data Pipeline Stages
 
-| Stage | Component | Description |
-|-------|-----------|-------------|
-| **1. Data Generation** | `src/data_generator.py` | Synthetic transaction generator with realistic distribution patterns (amounts weighted 10–200K VND) |
-| **2. ETL Processing** | `src/etl/processor.py` | Extract, transform, load — filters completed txs, currency conversion, temporal features |
-| **3. Data Enrichment** | `src/etl/enricher.py` | Rolling window statistics, location risk scoring, account velocity analysis |
-| **4. Fraud Detection** | `src/fraud/detector.py` | Multi-layered detection: rule engine + Isolation Forest anomaly detection |
-| **5. Monitoring** | `src/monitoring/dashboard.py` | Streamlit dashboard with real-time metrics, alert visualization, data quality KPIs |
+| Stage | Component | Data Source | Description |
+|-------|-----------|-------------|-------------|
+| **1. Extraction** | `src/integrations/thoughtmachine_extractor.py` | ThoughtMachine GL API | CDC + Full sync of GL balances, transactions, contracts |
+| **2. S3 Staging** | `src/jobs/bronze_ingest.py` | AWS S3 Raw | Partition by date/account ID, Parquet format |
+| **3. Validation** | `src/etl/validator.py` | Bronze Zone | Schema validation, duplicate detection, data quality checks |
+| **4. Transformation** | `src/jobs/silver_transform.py` | Silver Zone | Feature engineering, risk indicators, customer enrichment |
+| **5. Gold Layer** | `src/jobs/gold_kpi.py` | Gold Zone | ML-ready features, historical snapshots, aggregations |
+| **6. Risk Scoring** | `src/fraud/detector.py` | Gold Zone | Rule-based + ML anomaly scoring |
+| **7. Alerting** | `src/fraud/rules.py` | PostgreSQL | Fraud classification, escalation, regulatory flags |
+| **8. Reporting** | `src/monitoring/dashboard.py` | Streamlit | Real-time dashboards, case investigation, compliance reports |
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Language** | Python 3.11+ |
-| **Data Processing** | Pandas, NumPy, scikit-learn |
-| **Orchestration** | Apache Airflow 2.8+ |
-| **Monitoring** | Streamlit, Plotly |
-| **Storage** | PostgreSQL, CSV |
-| **Configuration** | Pydantic, YAML |
-| **Logging** | Structlog (JSON output) |
-| **CLI** | Click |
-| **Containerization** | Docker, Docker Compose |
+| **Source System** | ThoughtMachine Core Banking (GL + Contracts) |
+| **Data Lake** | AWS S3 (Bronze/Silver/Gold) + Redshift/RDS |
+| **Language** | Python 3.10+ (Async, Multiprocessing) |
+| **Data Processing** | PySpark, Pandas, DuckDB |
+| **ML/Fraud Detection** | Scikit-learn, XGBoost, Isolation Forest |
+| **Orchestration** | Apache Airflow 2.7+ |
+| **Monitoring** | Streamlit, Plotly, Prometheus |
+| **Logging** | Structlog (JSON), CloudWatch |
+| **Configuration** | Pydantic, .env |
+| **CLI** | Click with multi-command interface |
+| **Containerization** | Docker, Docker Compose, Kubernetes |
+| **CI/CD** | GitHub Actions (lint, test, deploy) |
 
 ## Quick Start
 
 ```bash
 # 1. Install dependencies
-pip install -e ".[dev]"
+pip install -r requirements.txt
 
-# 2. Generate synthetic transaction data
-vpbank-pipeline generate 10000
+# 2. Configure ThoughtMachine connection
+cp .env.example .env
+# Edit .env: TM_API_URL, TM_API_KEY, AWS credentials
 
-# 3. Run ETL pipeline
-vpbank-pipeline etl
+# 3. Run extraction pipeline (ThoughtMachine → S3)
+python -m src.jobs.bronze_ingest --date 2024-05-13 --incremental
 
-# 4. Run fraud detection
-vpbank-pipeline detect
+# 4. Run transformation (Silver/Gold layers)
+python -m src.jobs.silver_transform
+python -m src.jobs.gold_kpi
 
-# 5. Or run the complete pipeline end-to-end
-vpbank-pipeline run-all --num-records 10000
+# 5. Run fraud detection
+python -m src.fraud.detector
 
-# 6. Launch monitoring dashboard
+# 6. Or use Airflow DAG
+airflow dags trigger banking_fraud_detection_pipeline
+
+# 7. Launch dashboards
 streamlit run src/monitoring/dashboard.py
 ```
+
+## Data Models
+
+### ThoughtMachine GL Integration
+
+**Source**: ThoughtMachine Core Banking (Cryptographic General Ledger)
+
+```
+GL Structure:
+├── Ledger (Account Balance)
+│   ├── Posting Instructions (Transactions)
+│   ├── Contracts (Products)
+│   └── Customer (Account Holder)
+├── Vault (Encrypted Secrets)
+└── Calendar (Business Days)
+```
+
+**Extracted Tables** (S3 Parquet):
+- `gl_balances` — Account balances per posting instruction
+- `gl_transactions` — Posting instruction details with GL accounts
+- `gl_contracts` — Product contracts linked to customers
+- `gl_customers` — Customer master data
 
 ## Repository Structure
 
 ```
-vpbank-fraud-detection-pipeline/
+vnbank-fraud-detection-platform/
 ├── src/
 │   ├── config/              # Configuration management (pydantic-settings)
 │   ├── etl/                 # ETL processing layer
@@ -111,11 +157,11 @@ vpbank-fraud-detection-pipeline/
 
 | Command | Description |
 |---------|-------------|
-| `vpbank-pipeline generate <n>` | Generate n synthetic transactions |
-| `vpbank-pipeline etl` | Run ETL processing pipeline |
-| `vpbank-pipeline detect` | Execute fraud detection engine |
-| `vpbank-pipeline dashboard` | Launch monitoring dashboard |
-| `vpbank-pipeline run-all` | Run complete pipeline end-to-end |
+| `vnbank-pipeline generate <n>` | Generate n synthetic transactions |
+| `vnbank-pipeline etl` | Run ETL processing pipeline |
+| `vnbank-pipeline detect` | Execute fraud detection engine |
+| `vnbank-pipeline dashboard` | Launch monitoring dashboard |
+| `vnbank-pipeline run-all` | Run complete pipeline end-to-end |
 
 ## Fraud Detection Rules
 

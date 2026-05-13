@@ -1,4 +1,4 @@
-# VPBank Fraud Detection Pipeline
+# VNBank Fraud Detection Pipeline
 # For production, use: pip install -e ".[dev]"
 
 pandas>=2.1.0
