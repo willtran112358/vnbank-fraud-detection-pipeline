@@ -1,4 +1,4 @@
-"""VNBank Fraud Detection Pipeline — CLI entry point."""
+"""Techcombank Fraud Detection Pipeline — CLI entry point."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 @click.option("--log-level", default=None, help="Override log level")
 @click.pass_context
 def cli(ctx: click.Context, config: str | None, log_level: str | None) -> None:
-    """VNBank Fraud Detection Pipeline — production-grade transaction monitoring."""
+    """Techcombank Fraud Detection Pipeline — production-grade transaction monitoring."""
     ctx.ensure_object(dict)
 
     settings = load_config(Path(config) if config else None)

@@ -1,6 +1,6 @@
-# Vietnam Banking Fraud Detection & Risk Intelligence Platform
+# Techcombank Fraud Detection Pipeline
 
-Enterprise-grade fraud detection and risk intelligence system integrating T24 Core Banking platform with real-time transaction monitoring, anomaly detection, and regulatory compliance. Designed for Vietnamese banking institutions processing high-volume transaction streams.
+Enterprise-grade fraud detection and risk intelligence for **Techcombank** — Vietnam’s leading tech-forward bank — on **T24** core banking, **AWS** (S3, streaming), **Databricks**/ML scoring patterns, and a continuously evolving fraud platform with international risk & data science experts.
 
 ## Architecture
 
@@ -139,7 +139,7 @@ T24 GL Structure:
 ## Repository Structure
 
 ```
-vnbank-fraud-detection-platform/
+techcombank-fraud-detection-platform/
 ├── src/
 │   ├── config/              # Configuration management (pydantic-settings)
 │   ├── etl/                 # ETL processing layer
@@ -167,11 +167,11 @@ vnbank-fraud-detection-platform/
 
 | Command | Description |
 |---------|-------------|
-| `vnbank-pipeline generate <n>` | Generate n synthetic transactions |
-| `vnbank-pipeline etl` | Run ETL processing pipeline |
-| `vnbank-pipeline detect` | Execute fraud detection engine |
-| `vnbank-pipeline dashboard` | Launch monitoring dashboard |
-| `vnbank-pipeline run-all` | Run complete pipeline end-to-end |
+| `techcombank-pipeline generate <n>` | Generate n synthetic transactions |
+| `techcombank-pipeline etl` | Run ETL processing pipeline |
+| `techcombank-pipeline detect` | Execute fraud detection engine |
+| `techcombank-pipeline dashboard` | Launch monitoring dashboard |
+| `techcombank-pipeline run-all` | Run complete pipeline end-to-end |
 
 ## Fraud Detection Rules
 

@@ -12,7 +12,7 @@ import structlog
 def configure_logging(
     level: str = "INFO",
     log_format: str = "json",
-    service: str = "vnbank-fraud-detection",
+    service: str = "techcombank-fraud-detection",
 ) -> None:
     """Configure structured logging with JSON output for production."""
     numeric_level = getattr(logging, level.upper(), logging.INFO)

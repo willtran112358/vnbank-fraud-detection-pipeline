@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
-    """Application settings for VNBank fraud detection pipeline."""
+    """Application settings for Techcombank fraud detection pipeline."""
 
     # Data paths
     data_dir: str = "data"
@@ -27,8 +27,8 @@ class AppSettings(BaseSettings):
     # Database
     db_host: str = "localhost"
     db_port: int = 5432
-    db_name: str = "vnbank_fraud"
-    db_user: str = "vnbank"
+    db_name: str = "techcombank_fraud"
+    db_user: str = "techcombank"
     db_password: str = ""
 
     # Monitoring
@@ -39,8 +39,8 @@ class AppSettings(BaseSettings):
 
     # Streaming configuration
     kafka_bootstrap_servers: str = "localhost:9092"
-    kafka_transaction_topic: str = "vnbank.transactions.raw"
-    kafka_alert_topic: str = "vnbank.alerts.fraud"
+    kafka_transaction_topic: str = "techcombank.transactions.raw"
+    kafka_alert_topic: str = "techcombank.alerts.fraud"
 
     model_config = {"env_prefix": "VNBANK_", "env_file": ".env", "extra": "ignore"}
 
